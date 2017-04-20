@@ -1,0 +1,79 @@
+{
+    "templateFile": {
+        "variables": {
+            "storage": {
+                "itemIndexes": [
+                    "general",
+                    "function"
+                ],
+                "items": {
+                    "general": {
+                        "name": "[concat(variables('lowerCaseAppName'),'stor')]",
+                        "location": "[variables('defaultResourceLocation')]",
+                        "kind": "Storage",
+                        "sku": {
+                            "Name": "Standard_LRS",
+                            "tier": "Standard"
+                        },
+                        "properties": {}
+                    },
+                    "function": {
+                        "name": "[concat(variables('lowerCaseAppName'),'func')]",
+                        "location": "[variables('defaultResourceLocation')]",
+                        "kind": "Storage",
+                        "sku": {
+                            "Name": "Standard_LRS",
+                            "tier": "Standard"
+                        },
+                        "properties": {}
+                    }
+                }
+            }
+        },
+        "resources": [
+            {
+                "comments": "FunctionApp",
+                "type": "Microsoft.Web/sites",
+                "name": "[variables('functionApp').name]",
+                "apiVersion": "2015-08-01",
+                "location": "[variables('functionApp').location]",
+                "kind": "[variables('functionApp').kind]",
+                "tags": {},
+                "properties": {
+                    "siteConfig": {
+                        "appSettings": [
+                            {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTSHARE",
+                                "value": "[variables('functionApp').name]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~1"
+                            },
+                            {
+                                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                                "value": "6.5.0"
+                            }
+                        ]
+                    }
+                },
+                "dependsOn": [
+                    "[variables('functionApp').serverFarmId]",
+                    "[resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name)]"
+                ]
+            }
+        ]
+    }
+}

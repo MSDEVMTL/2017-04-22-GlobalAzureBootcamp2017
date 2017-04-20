@@ -1,0 +1,62 @@
+{
+    "templateFile": {
+        "parameters": {
+            "appName": {
+                "maxLength": 7,
+                "type": "string",
+                "metadata": {
+                    "description": "The base name of the solution. Up to 7 characters."
+                }
+            }
+        },
+        "variables": {
+            "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+            "defaultResourceLocation": "[resourceGroup().location]",
+            "lowerCaseAppName": "[toLower( concat(parameters('appName'), variables('uniqueString')) )]",
+            "storage": {
+                "itemIndexes": [
+                    "general"
+                ],
+                "items": {
+                    "general": {
+                        "name": "[concat(variables('lowerCaseAppName'),'stor')]",
+                        "location": "[variables('defaultResourceLocation')]",
+                        "kind": "Storage",
+                        "sku": {
+                            "Name": "Standard_LRS",
+                            "tier": "Standard"
+                        },
+                        "properties": {}
+                    }
+                }
+            }
+        },
+        "resources": [
+            {
+                "comments": "Storage Accounts",
+                "type": "Microsoft.Storage/storageAccounts",
+                "name": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].name]",
+                "apiVersion": "2016-01-01",
+                "location": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].location]",
+                "copy": {
+                    "name": "storageAccounts",
+                    "count": "[length(variables('storage').itemIndexes)]"
+                },
+                "sku": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].sku]",
+                "kind": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].kind]",
+                "tags": {},
+                "properties": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].properties]"
+            }
+        ]
+    },
+    "parameterFile": {
+        "parameters": {
+            "appName": {
+                "value": "gab2017",
+                "metadata": {
+                    "description": "Enter the application name."
+                }
+            }
+        }
+    }
+}

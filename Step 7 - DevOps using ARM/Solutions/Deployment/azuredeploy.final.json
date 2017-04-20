@@ -1,0 +1,236 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appName": {
+            "maxLength": 7,
+            "type": "string",
+            "metadata": {
+                "description": "The base name of the solution. Up to 7 characters."
+            }
+        }
+    },
+    "variables": {
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+
+        "defaultResourceLocation": "[resourceGroup().location]",
+
+        "lowerCaseAppName": "[toLower( concat(parameters('appName'), variables('uniqueString')) )]",
+
+        "storage": {
+            "itemIndexes": [ "general", "function" ],
+            "items": {
+                "general": {
+                    "name": "[concat(variables('lowerCaseAppName'),'stor')]",
+                    "location": "[variables('defaultResourceLocation')]",
+                    "kind": "Storage",
+                    "sku": {
+                        "Name": "Standard_LRS",
+                        "tier": "Standard"
+                    },
+                    "properties": {}
+                },
+                "function": {
+                    "name": "[concat(variables('lowerCaseAppName'),'func')]",
+                    "location": "[variables('defaultResourceLocation')]",
+                    "kind": "Storage",
+                    "sku": {
+                        "Name": "Standard_LRS",
+                        "tier": "Standard"
+                    },
+                    "properties": {}
+                }
+            }
+        },
+
+        "appServicePlanFunction": {
+            "name": "[concat(variables('lowerCaseAppName'),'-sp-function')]",
+            "location": "[variables('defaultResourceLocation')]",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            }
+        },
+        "functionApp": {
+            "name": "[concat(variables('lowerCaseAppName'),'-functionapp')]",
+            "location": "[variables('defaultResourceLocation')]",
+            "kind": "functionapp",
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanFunction').name)]"
+        },
+        "appServicePlanWeb": {
+            "name": "[concat(variables('lowerCaseAppName'),'-sp-web')]",
+            "location": "[variables('defaultResourceLocation')]",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "capacity": 1
+            }
+        },
+        "webApp": {
+            "name": "[concat(variables('lowerCaseAppName'),'-webapp')]",
+            "location": "[variables('defaultResourceLocation')]",
+            "kind": "app",
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanWeb').name)]"
+        },
+
+        "documentDB": {
+            "name": "[concat(variables('lowerCaseAppName'),'-docdb')]",
+            "location": "[variables('defaultResourceLocation')]",
+            "kind": "GlobalDocumentDB",
+            "databaseAccountOfferType": "Standard",
+            "consistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            }
+        },
+
+        "appInsights": {
+            "name": "[concat(variables('lowerCaseAppName'),'-appinsights')]",
+            "location": "East US",
+            "kind": "web",
+            "LinkedApplicationId": "[resourceId('Microsoft.Web/sites', variables('webApp').name)]"
+
+        }
+    },
+    "resources": [
+        {
+            "comments": "Storage Accounts",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].name]",
+            "apiVersion": "2016-01-01",
+            "location": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].location]",
+            "copy": {
+                "name": "storageAccounts",
+                "count": "[length(variables('storage').itemIndexes)]"
+            },
+            "sku": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].sku]",
+            "kind": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].kind]",
+            "tags": {},
+            "properties": "[variables('storage').items[variables('storage').itemIndexes[copyIndex()]].properties]"
+        },
+        {
+            "comments": "AppService Plan - Function",
+            "type": "Microsoft.Web/serverfarms",
+            "name": "[variables('appServicePlanFunction').name]",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('appServicePlanFunction').location]",
+            "sku": "[variables('appServicePlanFunction').sku]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "comments": "FunctionApp",
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('functionApp').name]",
+            "apiVersion": "2015-08-01",
+            "location": "[variables('functionApp').location]",
+            "kind": "[variables('functionApp').kind]",
+            "tags": {},
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage').items['function'].name, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name),'2016-01-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[variables('functionApp').name]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~1"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "6.5.0"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[variables('functionApp').serverFarmId]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage').items['function'].name)]"
+            ]
+        },
+        {
+            "comments": "AppService Plan - Web",
+            "type": "Microsoft.Web/serverfarms",
+            "name": "[variables('appServicePlanWeb').name]",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('appServicePlanWeb').location]",
+            "sku": "[variables('appServicePlanWeb').sku]",
+            "tags": {},
+            "properties": {},
+            "dependsOn": [
+                "[variables('functionApp').serverFarmId]"
+            ]
+        },
+        {
+            "comments": "WebApp",
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('webApp').name]",
+            "apiVersion": "2015-08-01",
+            "location": "[variables('webApp').location]",
+            "kind": "[variables('webApp').kind]",
+            "tags": {},
+            "properties": {
+                "serverFarmId": "[variables('webApp').serverFarmId]"
+            },
+            "dependsOn": [
+                "[variables('webApp').serverFarmId]"
+            ],
+            "resources": [
+                {
+                    "type": "config",
+                    "name": "appsettings",
+                    "apiVersion": "2015-08-01",
+                    "properties": {
+                        "appInsightInstrumentationKey": "[reference(resourceId('Microsoft.Insights/components', variables('appInsights').name), '2014-04-01').InstrumentationKey]"
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('webApp').name)]"
+                    ]
+                }
+            ]
+        },        
+        {
+            "comments": "DocumentDB",
+            "name": "[variables('documentDB').name]",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2015-04-08",
+            "location": "[variables('documentDB').location]",
+            "kind": "[variables('documentDB').kind]",
+            "tags": {},
+            "properties": {
+                "databaseAccountOfferType": "[variables('documentDB').databaseAccountOfferType]",
+                "consistencyPolicy": "[variables('documentDB').consistencyPolicy]"
+            }
+        },
+        {
+            "comments": "Application Insights",
+            "name": "[variables('appInsights').name]",
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2014-04-01",
+            "location": "[variables('appInsights').location]",
+            "kind": "[variables('appInsights').kind]",
+            "tags": {},
+            "properties": {
+                "ApplicationId": "[variables('appInsights').linkedApplicationId]"
+            },
+            "dependsOn": [
+                "[variables('appInsights').linkedApplicationId]"
+            ]
+        }
+    ]
+}

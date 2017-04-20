@@ -1,0 +1,33 @@
+1 - Add App Insights to the project
+2 - Show the 4 items underneath the ApplicationInsights.config file
+3 - Show the module added in the web.config file
+4 - Get the instrumentation key and add it to the web.config  
+5 - Execute the application and see the logged data in App Insights.
+
+6 - Add Javascript (from the portal) to track Client Side  
+
+7 - Go into IE or Chrome - do F12 and show the calls to AppInsights.
+
+8 - Go to App Insights and show the Overview with already some data in it
+
+9 - Application Map - dependencies - custom dependencies - exceptions - custom event 
+
+9.1 - Add the class SomeService and ServiceException
+9.2 - Add a new controller to call the service (ServiceController from Empty Controller) 
+9.3 - Add a new view Index under the service folder
+9.4 - Show the failed request from Visual Studio - click on the error and it will open the file that threw the exception - when the failed request is available in the portal, drill down to the bottom of it.
+9.5 - Demonstrate how we can handle the exception and still log it
+9.6 - Go to metrics explorer in the portal and display exceptions - drill down in the exceptions
+
+
+10 - Dependencies - show them  MAP
+10.1 add a method to the service with the dependency class and call it from the contoller
+10.2 see the dependency log in the portal - click on ... and related metrics 
+
+11 - Add custom event in the Azure Function - show the custom event 
+
+12 - a little bit of analytics
+12.0 All predefined queries
+12.1 All failed requests
+12.2 Custom events
+12.3 share a query or add it to the dashboard.

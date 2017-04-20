@@ -1,0 +1,36 @@
+public static async Task Run(string myQueueItem, TraceWriter log)
+{
+    log.Info("Function is starting...");
+
+    dynamic queueItemConverted = JsonConvert.DeserializeObject(myQueueItem); 
+    
+    var comment = queueItemConverted.Text.ToString();
+
+    log.Info($"Text from Message: {comment}");
+
+    string BaseUrl = "https://westus.api.cognitive.microsoft.com/";
+    string AccountKey = ConfigurationManager.AppSettings["textAnalysisApiKey"];
+
+    var _language = await DetectLanguage(comment, BaseUrl, AccountKey);
+    log.Info("Language: " + _language);
+
+    log.Info("Function is ending...");
+}
+
+private static async Task<String> CallEndpoint(HttpClient client, string uri, byte[] byteData)
+
+{
+    
+    using (var content = new ByteArrayContent(byteData))
+    
+    {
+
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        var response = await client.PostAsync(uri, content);
+
+        return await response.Content.ReadAsStringAsync();
+
+    }
+
+}

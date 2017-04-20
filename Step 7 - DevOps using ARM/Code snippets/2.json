@@ -1,0 +1,35 @@
+{
+    "templateFile": {
+        "variables": {
+            "appServicePlanFunction": {
+                "name": "[concat(variables('lowerCaseAppName'),'-sp-function')]",
+                "location": "[variables('defaultResourceLocation')]",
+                "sku": {
+                    "name": "Y1",
+                    "tier": "Dynamic",
+                    "size": "Y1",
+                    "family": "Y",
+                    "capacity": 0
+                }
+            },
+            "functionApp": {
+                "name": "[concat(variables('lowerCaseAppName'),'-functionapp')]",
+                "location": "[variables('defaultResourceLocation')]",
+                "kind": "functionapp",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanFunction').name)]"
+            }
+        },
+        "resources": [
+            {
+                "comments": "AppService Plan - Function",
+                "type": "Microsoft.Web/serverfarms",
+                "name": "[variables('appServicePlanFunction').name]",
+                "apiVersion": "2016-09-01",
+                "location": "[variables('appServicePlanFunction').location]",
+                "sku": "[variables('appServicePlanFunction').sku]",
+                "tags": {},
+                "properties": {}
+            }
+        ]
+    }
+}

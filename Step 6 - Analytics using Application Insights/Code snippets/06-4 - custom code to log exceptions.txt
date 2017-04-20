@@ -1,0 +1,13 @@
+
+----Replace the code of the Index method in the controller
+
+ 	    try
+            {                
+                Services.SomeService.ThrowAnExceptionPlease();
+            }
+            catch(Exception ex)
+            {
+                var client = new TelemetryClient();
+                client.TrackException(ex);
+            }
+            return View();

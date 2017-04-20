@@ -1,0 +1,30 @@
+{
+    "templateFile": {
+        "variables": {
+            "documentDB": {
+                "name": "[concat(variables('lowerCaseAppName'),'-docdb')]",
+                "location": "[variables('defaultResourceLocation')]",
+                "kind": "GlobalDocumentDB",
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session"
+                }
+            }
+        },
+        "resources": [
+            {
+                "comments": "DocumentDB",
+                "name": "[variables('documentDB').name]",
+                "type": "Microsoft.DocumentDB/databaseAccounts",
+                "apiVersion": "2015-04-08",
+                "location": "[variables('documentDB').location]",
+                "kind": "[variables('documentDB').kind]",
+                "tags": {},
+                "properties": {
+                    "databaseAccountOfferType": "[variables('documentDB').databaseAccountOfferType]",
+                    "consistencyPolicy": "[variables('documentDB').consistencyPolicy]"
+                }
+            }
+        ]
+    }
+}

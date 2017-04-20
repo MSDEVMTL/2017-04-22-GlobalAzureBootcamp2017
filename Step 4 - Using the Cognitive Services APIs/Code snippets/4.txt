@@ -1,0 +1,26 @@
+var _sentiment = await DetectSentiment(comment, BaseUrl, AccountKey);
+log.Info("Sentiment: " + _sentiment.ToString());
+
+private static async Task<float> DetectSentiment(string comment, string BaseUrl, string AccountKey)
+{
+    using (var client = new HttpClient())
+    {
+        client.BaseAddress = new Uri(BaseUrl);
+
+        // Request headers.
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", AccountKey);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        // Request body. Insert your text data here in JSON format.
+        byte[] byteData = Encoding.UTF8.GetBytes("{\"documents\":[" +
+            "{\"id\":\"1\",\"text\":\"" + comment + "\"}" +
+            "]}");
+
+        var uri = "text/analytics/v2.0/sentiment";
+        var response = await CallEndpoint(client, uri, byteData);
+        dynamic _responseConverted = JsonConvert.DeserializeObject(response);
+        float sentiment = float.Parse(_responseConverted.documents[0].score.ToString());
+
+        return sentiment;
+    }
+}

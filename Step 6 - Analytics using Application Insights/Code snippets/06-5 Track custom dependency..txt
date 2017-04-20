@@ -1,0 +1,44 @@
+-- add this line in the file SomeService.cs
+
+using Microsoft.ApplicationInsights;
+
+-- add this method to the SomeService class
+
+public static void SomeWorkWithDependency()
+        {
+            var success = false;
+            var telemetry = new TelemetryClient();            
+            var startTime = DateTime.UtcNow;
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                var dependency = new DependencyService();
+                success = dependency.DoSomeWork();
+            }
+            finally
+            {
+                timer.Stop();
+                telemetry.TrackDependency("DependencyService", "DoSomeWork", startTime, timer.Elapsed, success);
+            }
+        }
+
+
+-- add this class at the bottom of the someservice.cs file
+
+
+    public class DependencyService
+    {
+        public bool DoSomeWork()
+        {
+            System.Threading.Thread.Sleep(5000);
+            return true;
+        }
+    }
+
+-- Change the code of the Index Method of the serviceController 
+
+replace the call for the method 
+Services.SomeService.ThrowAnExceptionPlease()
+by
+
+Services.SomeService.SomeWorkWithDependency();

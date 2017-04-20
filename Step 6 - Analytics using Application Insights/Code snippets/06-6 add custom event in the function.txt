@@ -1,0 +1,29 @@
+In the functions - On the right - View Files -
+Add a new file project.json with the following content:
+{
+  "frameworks": {
+    "net46":{
+      "dependencies": {
+        "Microsoft.ApplicationInsights": "2.2.0"
+      }
+    }
+  }
+}
+
+In the function file (run.csx) add the following method:
+
+public static TelemetryClient AppInsight()
+
+{
+     
+	var client = new TelemetryClient();
+     
+	client.InstrumentationKey = "INSTRUMENTATIONKEY";
+     
+	return client;
+
+}
+
+In the main method add the following;
+
+ AppInsight().TrackEvent("MessagePost");    

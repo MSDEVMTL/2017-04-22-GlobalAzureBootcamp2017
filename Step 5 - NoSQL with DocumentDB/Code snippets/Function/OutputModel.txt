@@ -1,0 +1,8 @@
+    var model = new SentimentAnalysisModel
+    {
+        message = comment,
+        sentimentScore = _sentiment,
+        language = _language
+    };
+
+    sentimentOutput = model;

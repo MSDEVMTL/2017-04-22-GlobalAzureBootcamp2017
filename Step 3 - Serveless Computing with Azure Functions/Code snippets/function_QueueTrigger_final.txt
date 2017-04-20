@@ -1,0 +1,16 @@
+#r "System.Web"
+#r "Newtonsoft.Json"
+
+using System;
+using Newtonsoft.Json;
+
+public static void Run(string myQueueItem, TraceWriter log)
+{
+    log.Info("Function is starting...");
+
+    dynamic queueItemConverted = JsonConvert.DeserializeObject(myQueueItem); 
+    
+    var comment = queueItemConverted.Text.ToString();
+
+    log.Info($"Text from Message: {comment}");
+}

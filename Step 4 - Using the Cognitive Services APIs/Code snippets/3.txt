@@ -1,0 +1,26 @@
+private static async Task<string> DetectLanguage(string comment, string BaseUrl, string AccountKey)
+{
+    using (var client = new HttpClient())
+    {
+        client.BaseAddress = new Uri(BaseUrl);
+
+        // Request headers.
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", AccountKey);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        // Request body. Insert your text data here in JSON format.
+        byte[] byteData = Encoding.UTF8.GetBytes("{\"documents\":[" +
+            "{\"id\":\"1\",\"text\":\"" + comment + "\"}" +
+            "]}");
+
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+        queryString["numberOfLanguagesToDetect"] = "1";
+        var uri = "text/analytics/v2.0/languages?" + queryString;
+        var response = await CallEndpoint(client, uri, byteData);
+        
+        dynamic _responseConverted = JsonConvert.DeserializeObject(response); 
+        string language = _responseConverted.documents[0].detectedLanguages[0].name.ToString();
+
+        return language;
+    }
+}
