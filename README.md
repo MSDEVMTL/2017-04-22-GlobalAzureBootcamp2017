@@ -22,7 +22,7 @@ Also you can view our Slideshare at [www.slideshare.net/MSDEVMTL/msdevmtl-inform
 * Alexandre Brisebois, Microsoft - [Twitter](https://twitter.com/Brisebois) | [GitHub](https://github.com/brisebois)
 * Vivien Chevallier, Lixar - [Twitter](https://twitter.com/vchevallier) | [GitHub](https://github.com/vivienchevallier)
 * Vincent Biret - [Twitter](https://twitter.com/baywet) | [GitHub](https://github.com/baywet)
-* Guy Barrette, MVP Azure - [Twitter](https://twitter.com/GuyBarrette) | [GitHub](https://github.com/guybarrette)
+* Guy Barrette, MVP Azure - [Twitter](https://twitter.com/GuyBarrette) | [Web](http://guybarrette.me)
 * David Chapdelaine, Microsoft - [Twitter](https://twitter.com/d_chapdelaine) | [GitHub](https://github.com/dchapdelaine)
 * Samir Bellouti, Sabbel Conseils - [Twitter](https://twitter.com/sbellouti) | [GitHub](https://github.com/sbellouti)
 * Stéphane Lapointe, GSOFT, MVP Azure - [Twitter](https://twitter.com/s_lapointe) | [GitHub](https://github.com/slapointe)
@@ -49,7 +49,7 @@ Make sure to have your account up and ready before the bootcamp.
 [Create your free Azure account today](https://azure.microsoft.com/en-us/free/)
 
 ### Visual Studio
-To use the demo code, you are required to install Microsoft Visual studio. The minimum version of Visual Studio to use with the demo code is 2015 with the update 3. [You can download a free trial of Visual Studio here](https://www.visualstudio.com/en-us/news/releasenotes/vs2015-update3-vs)
+To use the demo code, you are required to install Microsoft Visual Studio 2015 or 2017. The minimum version of Visual Studio to use with the demo code is 2015 with the update 3. [You can download a free trial of Visual Studio here](https://www.visualstudio.com/en-us/news/releasenotes/vs2015-update3-vs)
 
 ### Azure SDK - 2.9.6
 Make sure you have installed the [Microsoft Azure SDK for .NET - 2.9.6](https://www.microsoft.com/en-us/download/details.aspx?id=54289)
