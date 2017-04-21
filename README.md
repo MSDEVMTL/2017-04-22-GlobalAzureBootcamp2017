@@ -15,7 +15,7 @@ This group is designed to bring together the Microsoft Windows Azure development
 
 Please visit our website and find out more about us and our incoming [meetup](https://www.meetup.com/fr-FR/msdevmtl/?chapter_analytics_code=UA-24676541-1).
 
-Also you can view our Slideshare at [www.slideshare.net/MSDEVMTL/msdevmtl-informations](www.slideshare.net/MSDEVMTL/msdevmtl-informations)
+Also you can view our Slideshare at [www.slideshare.net/MSDEVMTL/msdevmtl-informations](http://www.slideshare.net/MSDEVMTL/msdevmtl-informations)
 
 ## Our speakers for the Global Azure Bootcamp 2017
 
