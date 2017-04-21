@@ -3,6 +3,7 @@ Get metrics from the application and go through ways to analyze them
 
 # References
 https://azure.microsoft.com/en-us/services/application-insights/
+
 https://docs.microsoft.com/en-us/azure/application-insights/app-insights-analytics
 
 # Let's code!
@@ -11,8 +12,6 @@ https://docs.microsoft.com/en-us/azure/application-insights/app-insights-analyti
 Right click on the web project : add -> Application Insights Telemetry...
 
 <img src="Media/img2.png" height="500">
-
-![img2][img2] 
 
 Click on Start Free button
 
@@ -64,7 +63,7 @@ var appInsights=window.appInsights||function(config)
 Note that this code is available in the portal (App Insight -> Getting Started -> Monitor and diagnose client side application)
 ![img4][img4]
 
-Now you can view the application on IE or Chrome. Open the developper console (F12) and you will notice calls to App Insights in the network tab
+Now you can view the application on IE or Chrome. Open the developper console (F12) and you will notice calls to App Insights in the network tab.  You should see requests to `https://dc.services.visualstudio.com/v2/track`which is App Insights end point to collect data.
 
 At this point, you should be able to see some data in App Insights if you login in the Portal and look at the overview section.
 
@@ -139,10 +138,97 @@ Run the application again and click on the `Service` menu item. You should not s
 
 On the Azure Portal, click on Metric Explorer and then add metrics to add the exceptions. We should be able to see the details of the exceptions.
 
+## Explore Application Map to track dependencies
+Application Insights will track dependencies calls by default, though you can explicitly track dependencies using the SDK.
 
+First add the following line at the top of the SomeService.cs file:
+```cs
+    using Microsoft.ApplicationInsights;
+```
 
+add the following method to the SomeService class:
+
+```cs
+        public static void SomeWorkWithDependency()
+        {
+            var success = false;
+            var telemetry = new TelemetryClient();            
+            var startTime = DateTime.UtcNow;
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                var dependency = new DependencyService();
+                success = dependency.DoSomeWork();
+            }
+            finally
+            {
+                timer.Stop();
+                telemetry.TrackDependency("DependencyService", "DoSomeWork", startTime, timer.Elapsed, success);
+            }
+        }
+```
+
+In the same file, add the following class:
+
+```cs
+    public class DependencyService
+    {
+        public bool DoSomeWork()
+        {
+            System.Threading.Thread.Sleep(5000);
+            return true;
+        }
+    }
+
+```
+
+Now, change the code in the ServiceController file, Index method by replacing the call to `Services.SomeService.ThrowAnExceptionPlease();` by `Services.SomeService.SomeWorkWithDependency();`
+
+Build and run the application and click on the Service menu item. You can also change the delay in the `DoSomeWork` method (make it very low for instance), rebuild and run again (do not forget to click on the Service menu item).
+
+Go in the Portal and click on the App Insights instance then Application Map. You should be able to see the calls the newly created method.
+
+## Track custom events in the function
+Open the function that we created in the step 3
+First, we need to add a dependency to Application Insights SDK.
+
+We must add a new file to the function; `project.json` and copy the follwoing content in it.
+
+```json
+{
+  "frameworks": {
+    "net46":{
+      "dependencies": {
+        "Microsoft.ApplicationInsights": "2.2.0"
+      }
+    }
+  }
+}
+```
+
+Now, in the `run.csx` file, add the following method and do not forget to put in your instrumentation key.
+
+```cs
+public static TelemetryClient AppInsight()
+
+{
+     
+	var client = new TelemetryClient();
+     
+	client.InstrumentationKey = "INSTRUMENTATIONKEY";
+     
+	return client;
+
+}
+```
+
+At the end of the main method, add the call to add an event:
+```cs
+AppInsight().TrackEvent("MessagePost"); 
+```
+
+Now, let's send a message using the web app to trigger the function and check in the metrics explorer that we actually logged a new custom event called `MessagePost`
 
 [img1]: Media/img1.png
-[img2]: (Media/img2.png = 200x200) "Add App Insights to the application"
 [img3]: Media/img3.png 
 [img4]: Media/img4.png
