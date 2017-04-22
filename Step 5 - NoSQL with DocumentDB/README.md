@@ -40,6 +40,12 @@ Configure the output as shown here. In the DocumentDB account connection field, 
 
 ![alt text][img8]
 
+## Add missing nuget packages
+Since our web app will be consomming data from DocumentDB, we will need to add the nuget package for the .Net DocumentDB SDK. 
+* Right click on the WebApp project and select "Manage Nuget Packages..."
+* Go in the browse tab and search for DocumentDB
+* Install the latest version of the package Microsoft.Azure.DocumentDB
+
 ## Create the sentiment analysis model
 Ask the attendees to open the file SentimentAnalysisModel.txt.txt in the Code Snippets/Function folder.  Copy the content outside of the function definition to use it as our output.
 
@@ -100,7 +106,6 @@ Becomes:
 
 Load your web app and navigate to the new page to view your sentiment analysis results!
 
-#End
 
 
 [img1]: Media/1-SearchDocDB.PNG "Search for DocumentDB"
