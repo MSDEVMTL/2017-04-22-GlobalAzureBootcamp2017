@@ -41,13 +41,40 @@ Configure the output as shown here. In the DocumentDB account connection field, 
 ![alt text][img8]
 
 ## Create the sentiment analysis model
-Ask the attendees to open the file SentimentAnalysisModel.txt.txt in the Code Snippets/Function folder.  Copy the content outside of the function definition to use it as our output.
+
+Updated the function code by creating the model class that will be used instantiate the return value
+```
+public class SentimentAnalysisModel
+{
+    public string message { get; set; }
+    public double sentimentScore { get; set; }
+    public string language { get; set; }
+}
+```
 
 ## Update the signature of the Function
-Ask the attendees to open the file FunctionSignature.txt in the Code Snippets/Function folder.  Add this parameters to the signature of the function.
+Update the function by updating its return value as shown here:
+```
+public static async Task Run(...)
+```
+becomes
+```
+public static async Task<SentimentAnalysisModel> Run(...)
+```
 
 ## Output our sentiment analysis model
-Ask the attendees to open the file OutputModel.txt in the Code Snippets/Function folder.  Add this at the very and of the main function.
+
+Add this code at the end of the Run function to output the model to DocumentDB.
+```
+var model = new SentimentAnalysisModel
+{
+    message = comment,
+    sentimentScore = _sentiment,
+    language = _language
+};
+
+return model;
+```
 
 ## Update the AppSettings of the WebApp
 
