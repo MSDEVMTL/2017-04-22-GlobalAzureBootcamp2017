@@ -40,12 +40,6 @@ Configure the output as shown here. In the DocumentDB account connection field, 
 
 ![alt text][img8]
 
-## Add missing nuget packages
-Since our web app will be consomming data from DocumentDB, we will need to add the nuget package for the .Net DocumentDB SDK. 
-* Right click on the WebApp project and select "Manage Nuget Packages..."
-* Go in the browse tab and search for DocumentDB
-* Install the latest version of the package Microsoft.Azure.DocumentDB
-
 ## Create the sentiment analysis model
 Ask the attendees to open the file SentimentAnalysisModel.txt.txt in the Code Snippets/Function folder.  Copy the content outside of the function definition to use it as our output.
 
@@ -80,6 +74,12 @@ Ask the attendees to go the Application Settings of the WebApp which was deploye
 
 Ask the attendeeds to Update the settings to include the DocumentDB URI and key.
 ![alt text][img10]
+
+## Add missing nuget packages
+Since our web app will be consomming data from DocumentDB, we will need to add the nuget package for the .Net DocumentDB SDK. 
+* Right click on the WebApp project and select "Manage Nuget Packages..."
+* Go in the browse tab and search for DocumentDB
+* Install the latest version of the package Microsoft.Azure.DocumentDB
 
 ## Update the WebApp to add our new view
 
