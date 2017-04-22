@@ -29,26 +29,6 @@ namespace WebApp.Models
 }
 ```
 
-### The View
-
-Under the `/Views` folder, create a `Queue` folder [Add -> New Scaffolded item... -> MVC 5 View]. Add a new view called `CreateMessage`. Use the `Create` template, and select the model we just created `QueueMessageModel`. Click `Add` and then open the view for editing.
-
-![img10][img10]
-
-The only edit we need to make is to remove the "Back to List" `ActionLink` near the bottom of the page.
-
-```html
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-```
-
-### The Layout
-
-In file `/Views/Shared/_Layout.cshtml`, uncomment the Create Message link. The line should  look like this:
-
-`<li>@Html.ActionLink("Create message", "CreateMessage", "Queue")</li>`
-
 ### The Controller
 
 Under the `/Controllers` folder, add a new empty controller and name it `QueueController`. We'll create two actions to handle the `GET` and `POST` requests for our message form:
@@ -84,6 +64,25 @@ namespace WebApp.Controllers
     }
 }
 ```
+### The View
+
+Under the `/Views` folder, create a `Queue` folder [Add -> New Scaffolded item... -> MVC 5 View]. Add a new view called `CreateMessage`. Use the `Create` template, and select the model we just created `QueueMessageModel`. Click `Add` and then open the view for editing.
+
+![img10][img10]
+
+The only edit we need to make is to remove the "Back to List" `ActionLink` near the bottom of the page.
+
+```html
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+```
+
+### The Layout
+
+In file `/Views/Shared/_Layout.cshtml`, uncomment the Create Message link. The line should  look like this:
+
+`<li>@Html.ActionLink("Create message", "CreateMessage", "Queue")</li>`
 ### Build and Run!
 
 Hit F5 and PROFIT!!!
