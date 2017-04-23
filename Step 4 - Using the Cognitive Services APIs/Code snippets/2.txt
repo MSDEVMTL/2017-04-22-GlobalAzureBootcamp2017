@@ -1,4 +1,4 @@
-public static async Task Run(string myQueueItem, TraceWriter log)
+public static void Run(string myQueueItem, TraceWriter log)
 {
     log.Info("Function is starting...");
 
@@ -11,7 +11,7 @@ public static async Task Run(string myQueueItem, TraceWriter log)
     string BaseUrl = "https://westus.api.cognitive.microsoft.com/";
     string AccountKey = ConfigurationManager.AppSettings["textAnalysisApiKey"];
 
-    var _language = await DetectLanguage(comment, BaseUrl, AccountKey);
+    var _language = DetectLanguage(comment, BaseUrl, AccountKey).Result;
     log.Info("Language: " + _language);
 
     log.Info("Function is ending...");
