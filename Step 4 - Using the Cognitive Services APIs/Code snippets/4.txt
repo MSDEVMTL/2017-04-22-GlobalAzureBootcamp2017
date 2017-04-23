@@ -1,4 +1,4 @@
-var _sentiment = await DetectSentiment(comment, BaseUrl, AccountKey);
+var _sentiment = DetectSentiment(comment, BaseUrl, AccountKey).Result;
 log.Info("Sentiment: " + _sentiment.ToString());
 
 private static async Task<float> DetectSentiment(string comment, string BaseUrl, string AccountKey)
